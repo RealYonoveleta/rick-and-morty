@@ -1,0 +1,14 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.error-message {
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}

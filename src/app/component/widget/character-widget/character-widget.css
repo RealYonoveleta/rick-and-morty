@@ -1,0 +1,50 @@
+:host {
+  --height: 250px;
+
+  min-height: var(--height);
+  height: var(--height);
+  display: grid;
+  grid-template-columns: var(--height) 1fr;
+  height: var(--height);
+  overflow: hidden;
+  gap: 20px;
+}
+
+:host img {
+  max-height: var(--height);
+  object-fit: contain;
+}
+
+.character-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 20px;
+  box-sizing: border-box;
+  padding: 20px 0;
+}
+
+.status-species {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  gap: 5px;
+}
+
+.status-species mat-icon {
+  height: 15px;
+  width: 15px;
+  font-size: 16px;
+}
+
+.status-species mat-icon.status-alive {
+  color: #55cc44;
+}
+
+.status-species mat-icon.status-dead {
+  color: #d63d2e;
+}
+
+.status-species mat-icon.status-unknown {
+  color: #ffcc00;
+}

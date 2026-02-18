@@ -1,0 +1,28 @@
+<img src="{{ result()?.image }}" />
+<div class="character-info">
+  <div class="widget-section name-status-species">
+    <h3 class="widget-title">{{ result()?.name }}</h3>
+    <div class="status-species">
+      <mat-icon
+        [class.status-alive]="result()?.status === 'Alive'"
+        [class.status-dead]="result()?.status === 'Dead'"
+        [class.status-unknown]="result()?.status === 'unknown'"
+      >
+        circle
+      </mat-icon>
+      <span>{{ result()?.status | titlecase }}</span>
+      <span>-</span>
+      <span>{{ result()?.species }}</span>
+    </div>
+  </div>
+
+  <div class="last-know-location-container widget-section">
+    <span class="last-know-location-label widget-label">Last known location</span>
+    <span class="last-know-location section-value">{{ location() }}</span>
+  </div>
+
+  <div class="first-seen-container widget-section">
+    <span class="first-seen-label widget-label">First seen in</span>
+    <span class="first-seen section-value">{{ firstSeen()?.name }}</span>
+  </div>
+</div>

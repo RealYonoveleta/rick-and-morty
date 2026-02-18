@@ -1,0 +1,115 @@
+:host {
+  --bg-color: #ffffff;
+
+  position: relative;
+  display: inline-block;
+  position: absolute;
+  left: 50px;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropdown-trigger {
+  position: relative;
+  border: none;
+  height: 100%;
+  padding: 20px 50px;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  font-size: 0.8em;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: top center;
+  pointer-events: none;
+  cursor: pointer;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  z-index: 1;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.dropdown-item {
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
+  background-color: var(--bg-color);
+}
+
+.dropdown-item span {
+  z-index: 1;
+}
+
+.dropdown-item:hover {
+  box-shadow:
+    0 0 10px var(--portal-color-medium),
+    0 0 20px var(--portal-color-dark),
+    inset 0 0 15px rgba(0, 0, 0, 0.4);
+
+  transform: scale(1.05);
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  animation: portalPulse 1.5s infinite ease-in-out;
+}
+
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: 400%;
+  background-position: 20% 20%;
+  background: radial-gradient(
+    circle at center,
+    var(--portal-color-dark),
+    var(--portal-color-medium) 50%,
+    var(--portal-color-light) 80%
+  );
+  z-index: -1;
+  filter: blur(5px);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.dropdown-item:hover::before {
+  opacity: 1;
+}
+
+@keyframes portalPulse {
+  0% {
+    box-shadow:
+      0 0 10px var(--portal-color-medium),
+      0 0 20px var(--portal-color-dark);
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--portal-color-light),
+      0 0 40px var(--portal-color-medium);
+  }
+  100% {
+    box-shadow:
+      0 0 10px var(--portal-color-medium),
+      0 0 20px var(--portal-color-dark);
+  }
+}

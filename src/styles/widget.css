@@ -1,0 +1,42 @@
+.widget {
+  --gap-size: 20px;
+  --border-radius: 20px;
+
+  width: 100%;
+  background-color: var(--widget-bg-color);
+  color: var(--main-font-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.widget:hover {
+  transform: scale(1.05);
+  box-shadow: inset 0 0 10px var(--portal-color-light);
+}
+
+.widget-title {
+  font-size: 1.8em;
+  margin: 0;
+  box-sizing: border-box;
+  padding-bottom: 5px;
+  font-weight: 900;
+}
+
+.widget-section {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2em;
+  gap: 5px;
+}
+
+.widget-label {
+  color: var(--desc-font-color);
+  font-weight: 500;
+}
+
+.widget-label::after {
+  content: ':';
+}

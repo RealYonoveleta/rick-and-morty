@@ -1,0 +1,35 @@
+<div id="endpoint-list" class="scrollable">
+  @if (error()) {
+    <app-api-error></app-api-error>
+  }
+
+  @for (result of results(); track result.id) {
+    <div class="widget-container" (selected)="onSelected($event)" clickableWidget [result]="result">
+      <ng-container
+        *ngComponentOutlet="
+          widget();
+          inputs: {
+            result,
+          }
+        "
+      ></ng-container>
+    </div>
+  } @empty {
+    <div id="no-elements">There are no elements</div>
+  }
+
+  <mat-paginator
+    [pageSize]="20"
+    [pageIndex]="pageIndex()"
+    [length]="count()"
+    (page)="onPageChange($event)"
+    [hidePageSize]="true"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
+
+<div class="backdrop" [class.visible]="!!selected()" (click)="closeDetail()"></div>
+
+<div id="detail-container" [class.open]="!!selected()" class="scrollable">
+  <ng-container *ngComponentOutlet="detail(); inputs: { result: selected() }"></ng-container>
+</div>

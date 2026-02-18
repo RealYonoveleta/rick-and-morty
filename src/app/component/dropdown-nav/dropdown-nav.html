@@ -1,0 +1,17 @@
+<button (click)="toggleMenu()" class="dropdown-trigger">
+  Travel
+  <span class="arrow">{{ open ? '▲' : '▼' }}</span>
+</button>
+
+<ul class="dropdown-menu" [class.show]="open">
+  @for (item of menuItems; track item.label) {
+    <li
+      routerLink="{{ item.path }}"
+      routerLinkActive="router-link-active"
+      (click)="closeMenu()"
+      class="dropdown-item"
+    >
+      <span>{{ item.label }}</span>
+    </li>
+  }
+</ul>
