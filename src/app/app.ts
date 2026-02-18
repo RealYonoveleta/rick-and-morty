@@ -1,7 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { Footer } from "./component/footer/footer";
-import { Header } from "./component/header/header";
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Footer } from './component/footer/footer';
+import { Header } from './component/header/header';
 import { CharacterService } from './service/character-service';
 import { EpisodeService } from './service/episode-service';
 import { LocationService } from './service/location-service';
@@ -10,13 +10,14 @@ import { LocationService } from './service/location-service';
   selector: 'app-root',
   imports: [RouterOutlet, Footer, Header],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App implements OnInit {
   constructor(
     private readonly characters: CharacterService,
     private readonly locations: LocationService,
-    private readonly episodes: EpisodeService) { }
+    private readonly episodes: EpisodeService,
+  ) {}
 
   ngOnInit(): void {
     this.characters.load();

@@ -1,5 +1,14 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, computed, effect, inject, Injector, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Injector,
+  signal,
+  untracked,
+  ViewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
@@ -15,8 +24,8 @@ import { ApiError } from '../api-error/api-error';
   templateUrl: './endpoint-list.html',
   styleUrl: './endpoint-list.css',
   host: {
-    '(document:keydown.escape)': 'closeDetail()'
-  }
+    '(document:keydown.escape)': 'closeDetail()',
+  },
 })
 export class EndpointList {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -35,6 +44,8 @@ export class EndpointList {
   pageIndex = computed(() => this.service().pageIndex());
   count = computed(() => this.service().count());
   results = computed(() => this.service().results());
+  readonly lastSuccessfulPage = computed(() => this.service().lastSuccessfulPage());
+  readonly serviceLoading = computed(() => this.service().loading());
 
   selected = signal<Model | null>(null);
 
@@ -42,12 +53,22 @@ export class EndpointList {
     effect(() => {
       const { service } = this.endpointMapping();
       this.service.set(this.injector.get(service));
-      this.service().load();
+    });
+
+    effect(() => {
+      const service = this.service();
+      untracked(() => service.load());
+    });
+
+    effect(() => {
+      const loading = this.serviceLoading();
+      if (loading || !this.paginator) return;
+      this.paginator.pageIndex = this.lastSuccessfulPage();
     });
   }
 
   onPageChange(event: PageEvent) {
-    this.service().handlePageChange(event, this.paginator);
+    this.service().handlePageChange(event);
   }
 
   onSelected(result: any) {

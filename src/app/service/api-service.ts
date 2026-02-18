@@ -1,15 +1,15 @@
-import { computed, inject, signal } from '@angular/core';
-import { API_BASE_URL } from '../../tokens';
-import { catchError, Observable, of, Subject, switchMap, tap, throttleTime } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { computed, inject, signal } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { catchError, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { API_BASE_URL } from '../../tokens';
 import { ApiResponse, EMPTY_API_RESPONSE } from '../model/api-response';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Model } from '../model/model';
 
 export abstract class ApiService<T extends Model> {
   protected apiUrl = inject(API_BASE_URL);
   private http = inject(HttpClient);
-  protected loadTrigger = new Subject<void>();
+  protected loadTrigger = new Subject<number>();
   private _response = signal<ApiResponse<T>>(EMPTY_API_RESPONSE);
   readonly response = this._response.asReadonly();
 
@@ -27,20 +27,28 @@ export abstract class ApiService<T extends Model> {
   readonly lastSuccessfulPage = signal(0);
   readonly hasError = signal(false);
 
+  loading = signal<boolean>(false);
+
   constructor() {
     this.loadTrigger
       .pipe(
-        throttleTime(300),
-        switchMap(() => {
+        tap((pageIndex) => {
+          this.setPage(pageIndex);
           this.hasError.set(false);
-
+          this.loading.set(true);
+        }),
+        switchMap(() => {
           if (this.pageCache.has(this.pageIndex())) {
             this.lastSuccessfulPage.set(this.pageIndex());
             return of(this.pageCache.get(this.pageIndex())!);
           }
 
           return this.http
-            .get<ApiResponse<T>>(`${this.apiUrl}/${this.endpoint}?page=${this.pageIndex() + 1}`)
+            .get<ApiResponse<T>>(`${this.apiUrl}/${this.endpoint}`, {
+              params: {
+                page: `${this.pageIndex() + 1}`,
+              },
+            })
             .pipe(
               tap((response) => {
                 this.pageCache.set(this.pageIndex(), response);
@@ -55,10 +63,13 @@ export abstract class ApiService<T extends Model> {
             );
         }),
       )
-      .subscribe((response) => this._response.set(response));
+      .subscribe((response) => {
+        this._response.set(response);
+        this.loading.set(false);
+      });
   }
-  load(): void {
-    this.loadTrigger.next();
+  load(pageIndex: number = 0): void {
+    this.loadTrigger.next(pageIndex);
   }
 
   setPage(page: number) {
@@ -69,10 +80,7 @@ export abstract class ApiService<T extends Model> {
     return this.http.get<T>(url);
   }
 
-  handlePageChange(event: PageEvent, paginator: MatPaginator): void {
-    this.setPage(event.pageIndex);
-    this.load();
-
-    paginator.pageIndex = this.lastSuccessfulPage();
+  handlePageChange(event: PageEvent): void {
+    this.load(event.pageIndex);
   }
 }

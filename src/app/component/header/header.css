@@ -1,24 +1,36 @@
 :host {
-    --height: 100px;
-    height: var(--height);
-    min-height: var(--height);
-    background-color: #FFFFFF;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em;
-    color: #202329;
-    position: relative;
+  --height: 100px;
+  --margin-gap: 50px;
+  height: var(--height);
+  min-height: var(--height);
+  background-color: #ffffff;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  color: #202329;
+  position: relative;
 }
 
 svg {
-    position: absolute;
-    fill: #F0F0F0;
-    height: 100%;
+  position: absolute;
+  fill: #f0f0f0;
+  height: 100%;
 }
 
 h1 {
-    z-index: 1;
-    user-select: none;
+  z-index: 1;
+  user-select: none;
+}
+
+app-dropdown-nav {
+  position: absolute;
+  left: var(--margin-gap);
+  height: 100%;
+}
+
+app-search-bar {
+  position: absolute;
+  right: var(--margin-gap);
 }
