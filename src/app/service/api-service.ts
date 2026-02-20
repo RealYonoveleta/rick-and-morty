@@ -1,7 +1,17 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, signal } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
-import { catchError, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import {
+  catchError,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { API_BASE_URL } from '../../tokens';
 import { ApiResponse, EMPTY_API_RESPONSE } from '../model/api-response';
 import { Model } from '../model/model';
@@ -9,7 +19,6 @@ import { Model } from '../model/model';
 export abstract class ApiService<T extends Model> {
   protected apiUrl = inject(API_BASE_URL);
   private http = inject(HttpClient);
-  protected loadTrigger = new Subject<number>();
   private _response = signal<ApiResponse<T>>(EMPTY_API_RESPONSE);
   readonly response = this._response.asReadonly();
 
@@ -21,55 +30,56 @@ export abstract class ApiService<T extends Model> {
   readonly pages = computed(() => this.info().pages);
 
   readonly pageIndex = signal(0);
-  readonly pageSize = signal(20);
+  private page$ = toObservable(this.pageIndex);
 
-  private pageCache = new Map<number, ApiResponse<T>>();
+  private pageCache = new Map<string, ApiResponse<T>>();
   readonly lastSuccessfulPage = signal(0);
-  readonly hasError = signal(false);
+  readonly error = signal<HttpErrorResponse | null>(null);
 
   loading = signal<boolean>(false);
 
+  searchTerm = signal<string>('');
+  private searchTerm$ = toObservable(this.searchTerm);
+
   constructor() {
-    this.loadTrigger
+    combineLatest([this.page$, this.searchTerm$.pipe(debounceTime(300), distinctUntilChanged())])
       .pipe(
-        tap((pageIndex) => {
-          this.setPage(pageIndex);
-          this.hasError.set(false);
+        switchMap(([page, searchTerm]) => {
+          const cacheKey = `${page}-${searchTerm}`;
+
           this.loading.set(true);
-        }),
-        switchMap(() => {
-          if (this.pageCache.has(this.pageIndex())) {
-            this.lastSuccessfulPage.set(this.pageIndex());
-            return of(this.pageCache.get(this.pageIndex())!);
+          this.error.set(null);
+
+          if (this.pageCache.has(cacheKey)) {
+            this.lastSuccessfulPage.set(page);
+            return of(this.pageCache.get(cacheKey)!);
           }
 
           return this.http
             .get<ApiResponse<T>>(`${this.apiUrl}/${this.endpoint}`, {
               params: {
-                page: `${this.pageIndex() + 1}`,
+                page: `${page + 1}`,
+                name: searchTerm,
               },
             })
             .pipe(
               tap((response) => {
-                this.pageCache.set(this.pageIndex(), response);
-                this.lastSuccessfulPage.set(this.pageIndex());
+                this.pageCache.set(cacheKey, response);
+                this.lastSuccessfulPage.set(page);
               }),
               catchError((error) => {
                 console.warn('Error fetching data:', error);
                 this.pageIndex.set(this.lastSuccessfulPage());
-                this.hasError.set(true);
+                this.error.set(error);
                 return of(this._response());
               }),
+              finalize(() => this.loading.set(false)),
             );
         }),
       )
       .subscribe((response) => {
         this._response.set(response);
-        this.loading.set(false);
       });
-  }
-  load(pageIndex: number = 0): void {
-    this.loadTrigger.next(pageIndex);
   }
 
   setPage(page: number) {
@@ -80,7 +90,8 @@ export abstract class ApiService<T extends Model> {
     return this.http.get<T>(url);
   }
 
-  handlePageChange(event: PageEvent): void {
-    this.load(event.pageIndex);
+  search(term: string): void {
+    this.setPage(0);
+    this.searchTerm.set(term);
   }
 }

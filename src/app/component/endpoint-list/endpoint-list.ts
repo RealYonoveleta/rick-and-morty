@@ -17,6 +17,7 @@ import { ClickableWidget } from '../../directive/clickable-widget';
 import { Model } from '../../model/model';
 import { ApiService } from '../../service/api-service';
 import { ApiError } from '../api-error/api-error';
+import { EndpointStateService } from '../../service/endpoint-state.service';
 
 @Component({
   selector: 'app-endpoint-list',
@@ -31,6 +32,7 @@ export class EndpointList {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   private readonly route = inject(ActivatedRoute);
   private readonly injector = inject(Injector);
+  private readonly endpointStateService = inject(EndpointStateService);
 
   private readonly endpointMapping = toSignal(
     this.route.data.pipe(map((data) => data['endpoint'])),
@@ -40,12 +42,14 @@ export class EndpointList {
   widget = computed(() => this.endpointMapping().widget);
   detail = computed(() => this.endpointMapping().detail);
 
-  error = computed(() => this.service().hasError());
+  error = computed(() => this.service().error());
   pageIndex = computed(() => this.service().pageIndex());
   count = computed(() => this.service().count());
   results = computed(() => this.service().results());
   readonly lastSuccessfulPage = computed(() => this.service().lastSuccessfulPage());
   readonly serviceLoading = computed(() => this.service().loading());
+
+  readonly searchTerm = computed(() => this.service().searchTerm());
 
   selected = signal<Model | null>(null);
 
@@ -57,7 +61,7 @@ export class EndpointList {
 
     effect(() => {
       const service = this.service();
-      untracked(() => service.load());
+      this.endpointStateService.setEndpointService(service);      
     });
 
     effect(() => {
@@ -68,7 +72,7 @@ export class EndpointList {
   }
 
   onPageChange(event: PageEvent) {
-    this.service().handlePageChange(event);
+    this.service().setPage(event.pageIndex);
   }
 
   onSelected(result: any) {

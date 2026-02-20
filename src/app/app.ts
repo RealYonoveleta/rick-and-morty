@@ -12,16 +12,4 @@ import { LocationService } from './service/location-service';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit {
-  constructor(
-    private readonly characters: CharacterService,
-    private readonly locations: LocationService,
-    private readonly episodes: EpisodeService,
-  ) {}
-
-  ngOnInit(): void {
-    this.characters.load();
-    this.locations.load();
-    this.episodes.load();
-  }
-}
+export class App {}
