@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EndpointStateService } from '../../service/endpoint-state.service';
 
@@ -11,7 +11,14 @@ import { EndpointStateService } from '../../service/endpoint-state.service';
 export class SearchBar {
   private service = inject(EndpointStateService).getEndpointService();
 
-  setSearchTerm(term: string) {
-    this.service()?.search(term);
+  searchTerm: string = '';
+
+  clearSearch = effect(() => {
+    void this.service();
+    this.searchTerm = '';
+  });
+
+  search() {
+    this.service()?.search(this.searchTerm);
   }
 }

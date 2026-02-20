@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 import { Model } from '../model/model';
 import { ApiService } from './api-service';
 
@@ -7,6 +7,11 @@ import { ApiService } from './api-service';
 })
 export class EndpointStateService {
   private endpointService = signal<ApiService<Model> | null>(null);
+
+  resetEndpointService = effect(() => {
+    const service = this.endpointService();
+    service?.search('');
+  });
 
   setEndpointService(service: ApiService<Model>) {
     this.endpointService.set(service);

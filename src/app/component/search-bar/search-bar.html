@@ -1,1 +1,1 @@
-<input type="text" placeholder="Search" (input)="setSearchTerm($event.target.value)" />
+<input type="text" placeholder="Search" [(ngModel)]="searchTerm" (input)="search()" />

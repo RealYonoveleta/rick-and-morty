@@ -6,8 +6,7 @@ import {
   inject,
   Injector,
   signal,
-  untracked,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -16,8 +15,8 @@ import { map } from 'rxjs';
 import { ClickableWidget } from '../../directive/clickable-widget';
 import { Model } from '../../model/model';
 import { ApiService } from '../../service/api-service';
-import { ApiError } from '../api-error/api-error';
 import { EndpointStateService } from '../../service/endpoint-state.service';
+import { ApiError } from '../api-error/api-error';
 
 @Component({
   selector: 'app-endpoint-list',
@@ -48,8 +47,6 @@ export class EndpointList {
   results = computed(() => this.service().results());
   readonly lastSuccessfulPage = computed(() => this.service().lastSuccessfulPage());
   readonly serviceLoading = computed(() => this.service().loading());
-
-  readonly searchTerm = computed(() => this.service().searchTerm());
 
   selected = signal<Model | null>(null);
 
