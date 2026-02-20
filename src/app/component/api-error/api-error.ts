@@ -1,4 +1,5 @@
-import { Component, input, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, computed, input } from '@angular/core';
 
 @Component({
   selector: 'app-api-error',
@@ -7,5 +8,15 @@ import { Component, input, signal } from '@angular/core';
   styleUrl: './api-error.css',
 })
 export class ApiError {
-  readonly message = signal('Request limit reached, wait a bit and try again ⏳');
+  readonly error = input<HttpErrorResponse>();
+
+  readonly errorMessage = computed(() => {
+    const status = this.error()?.status;
+    return this.ERROR_MESSAGES[status!] || 'An unexpected error occurred. Please try again later.';
+  });
+
+  private readonly ERROR_MESSAGES: Record<number, string> = {
+    404: 'Resource not found. Please check the URL and try again.',
+    500: 'Internal server error. Please try again later.',
+  };
 }

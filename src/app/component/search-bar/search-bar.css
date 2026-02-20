@@ -1,0 +1,33 @@
+:host {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+input {
+    border: 2px solid var(--portal-color-light);
+    box-shadow: inset 0 0 10px var(--portal-color-light);
+    outline: none;
+    font-size: 0.8em;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+input:focus {
+    animation: lightPulse 4s infinite ease-in-out;
+}
+
+@keyframes lightPulse {
+    0% {
+        box-shadow: inset 0 0 10px var(--portal-color-light);
+    }
+    50% {
+        box-shadow: inset 0 0 15px var(--portal-color-medium);
+    }
+    100% {
+        box-shadow: inset 0 0 10px var(--portal-color-light);
+    }
+}

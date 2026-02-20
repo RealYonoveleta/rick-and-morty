@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { EndpointStateService } from '../../service/endpoint-state.service';
 
 @Component({
   selector: 'app-search-bar',
@@ -8,5 +9,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './search-bar.css',
 })
 export class SearchBar {
-  searchValue: string = '';
+  private service = inject(EndpointStateService).getEndpointService();
+
+  setSearchTerm(term: string) {
+    this.service()?.search(term);
+  }
 }

@@ -1,6 +1,6 @@
 <div id="endpoint-list" class="scrollable">
   @if (error()) {
-    <app-api-error></app-api-error>
+    <app-api-error [error]="error()!"></app-api-error>
   }
 
   @for (result of results(); track result.id) {
