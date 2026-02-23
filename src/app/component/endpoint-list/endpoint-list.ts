@@ -3,15 +3,17 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   Injector,
   signal,
-  ViewChild
+  viewChild,
+  ViewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { ClickableWidget } from '../../directive/clickable-widget';
 import { Model } from '../../model/model';
 import { ApiService } from '../../service/api-service';
@@ -33,8 +35,13 @@ export class EndpointList {
   private readonly injector = inject(Injector);
   private readonly endpointStateService = inject(EndpointStateService);
 
+  private endpointList = viewChild('endpointList', { read: ElementRef });
+
   private readonly endpointMapping = toSignal(
-    this.route.data.pipe(map((data) => data['endpoint'])),
+    this.route.data.pipe(
+      map((data) => data['endpoint']),
+      tap(() => this.resetScroll()),
+    ),
   );
 
   service = signal<ApiService<Model>>(this.injector.get(this.endpointMapping().service));
@@ -58,7 +65,7 @@ export class EndpointList {
 
     effect(() => {
       const service = this.service();
-      this.endpointStateService.setEndpointService(service);      
+      this.endpointStateService.setEndpointService(service);
     });
 
     effect(() => {
@@ -70,6 +77,7 @@ export class EndpointList {
 
   onPageChange(event: PageEvent) {
     this.service().setPage(event.pageIndex);
+    this.resetScroll();
   }
 
   onSelected(result: any) {
@@ -78,5 +86,9 @@ export class EndpointList {
 
   closeDetail() {
     this.selected.set(null);
+  }
+
+  private resetScroll() {
+    this.endpointList()?.nativeElement.scrollTo({ top: 0, behaviour: 'auto' });
   }
 }

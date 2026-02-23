@@ -1,4 +1,4 @@
-<div id="endpoint-list" class="scrollable">
+<div id="endpoint-list" class="scrollable" #endpointList>
   @if (error()) {
     <app-api-error [error]="error()!"></app-api-error>
   }
