@@ -16,7 +16,7 @@ export class ApiError {
   });
 
   private readonly ERROR_MESSAGES: Record<number, string> = {
-    404: 'Resource not found. Please check the URL and try again.',
-    500: 'Internal server error. Please try again later.',
+    404: 'No Ricksults found in this dimension',
+    500: 'Internal server error. Please try again later',
   };
 }

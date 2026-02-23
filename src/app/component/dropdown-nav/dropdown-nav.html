@@ -1,6 +1,8 @@
 <button (click)="toggleMenu()" class="dropdown-trigger">
-  Travel
-  <span class="arrow">{{ open ? '▲' : '▼' }}</span>
+  <div class="menu-label">
+    <span>Switch Dimension</span>
+    <span class="arrow">{{ open ? '▲' : '▼' }}</span>
+  </div>
 </button>
 
 <ul class="dropdown-menu" [class.show]="open">

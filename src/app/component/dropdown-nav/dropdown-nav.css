@@ -17,29 +17,38 @@
   background-color: var(--bg-color);
   font-size: 1em;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 .dropdown-trigger::after {
   content: '';
-  position: absolute;
-  width: 60%;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  height: 5px;
+  width: 80%;
+  min-height: 5px;
   background: radial-gradient(
     circle at center,
     var(--portal-color-dark) 0%,
     var(--portal-color-medium) 40%,
     var(--portal-color-light) 60%
   );
+
+  transform: scaleX(0);
   transition: transform 0.3s ease;
   filter: blur(1px);
   border-radius: 50%;
 }
 
 .dropdown-trigger:hover::after {
-  transform: translateX(-50%) scaleX(1);
+  transform: scaleX(1);
+}
+
+.menu-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown-menu {
